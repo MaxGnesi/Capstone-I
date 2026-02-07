@@ -1,6 +1,6 @@
 # GraphCodeBERT for Smart Contract Vulnerability Detection
 
-## 📋 Project Overview
+## Project Overview
 
 This notebook implements a deep learning system for detecting vulnerabilities in Ethereum smart contracts using **GraphCodeBERT**, a pre-trained transformer model specialized for code understanding. The system classifies contracts across 6 vulnerability types:
 
@@ -13,7 +13,7 @@ This notebook implements a deep learning system for detecting vulnerabilities in
 
 ---
 
-## 🎯 Why GraphCodeBERT?
+## Why GraphCodeBERT?
 
 ### The Architecture Decision
 
@@ -32,9 +32,9 @@ Answer: Encoder-only ✅
 
 | Architecture | Type | Use Case | Example | Our Task? |
 |-------------|------|----------|---------|-----------|
-| **Encoder-Only** | Understanding | Classification, Detection | BERT, GraphCodeBERT | ✅ YES |
-| **Decoder-Only** | Generation | Autocomplete, Chat | GPT, Copilot | ❌ No (we don't generate code) |
-| **Encoder-Decoder** | Transformation | Bug Repair, Translation | T5, CodeT5 | ❌ No (we classify, not fix) |
+| **Encoder-Only** | Understanding | Classification, Detection | BERT, GraphCodeBERT | YES |
+| **Decoder-Only** | Generation | Autocomplete, Chat | GPT, Copilot | No (we don't generate code) |
+| **Encoder-Decoder** | Transformation | Bug Repair, Translation | T5, CodeT5 | No (we classify, not fix) |
 
 **Key Concept:**
 - **Encoder-only** models are **non-autoregressive** - they process all tokens in parallel and see the entire contract context bidirectionally
@@ -43,14 +43,14 @@ Answer: Encoder-only ✅
 
 ---
 
-## 🧩 The Hierarchical Chunking Solution
+## The Hierarchical Chunking Solution
 
 ### The Problem
 
 Standard BERT-style models have a **512-token limit**, but:
 - Average Solidity contract: ~18,600 characters ≈ **4,500 tokens**
 - Truncating to 512 tokens = seeing only **11% of the contract**
-- Early experiments with truncation: **0.35 F1** ❌ (terrible!)
+- Early experiments with truncation: **0.35 F1** (terrible!)
 
 ### The Solution: Hierarchical Chunking
 
@@ -83,7 +83,7 @@ Classification layer
 
 ---
 
-## 🔧 Technical Implementation
+## Technical Implementation
 
 ### 1. Tokenization & Chunking
 
@@ -142,7 +142,7 @@ Vulnerability Scores [6 classes]
 
 ---
 
-## 🧊 Frozen vs Fine-Tuning: Why We Don't Fine-Tune
+## Frozen vs Fine-Tuning: Why We Don't Fine-Tune
 
 ### The Data-to-Parameter Ratio Problem
 
@@ -151,15 +151,15 @@ Our Dataset: 15,000 training contracts
 
 Option 1 - Frozen GraphCodeBERT (our choice):
   Trainable: 200K params (classifier only)
-  Ratio: 15,000 samples ÷ 0.2M params = 75 samples/M param ✅
+  Ratio: 15,000 samples ÷ 0.2M params = 75 samples/M param 
   
 Option 2 - Fine-tune Last 2 Layers:
   Trainable: 12M params
-  Ratio: 15,000 samples ÷ 12M params = 1.25 samples/M param ⚠️
+  Ratio: 15,000 samples ÷ 12M params = 1.25 samples/M param 
   
 Option 3 - Full Fine-tuning:
   Trainable: 125M params
-  Ratio: 15,000 samples ÷ 125M params = 0.12 samples/M param ❌
+  Ratio: 15,000 samples ÷ 125M params = 0.12 samples/M param 
 
 Rule of Thumb: Need 1,000+ samples per million parameters
 ```
@@ -170,16 +170,16 @@ The fine-tuning analysis notebook demonstrates:
 
 | Configuration | Trainable Params | Val F1 | Train-Val Gap | Status |
 |--------------|------------------|--------|---------------|---------|
-| **Frozen** | 0.2M | **0.85** | -0.03 | ✅ Healthy |
-| Last 2 Layers | 12M | 0.83 | -0.10 | ⚠️ Slight overfit |
-| Last 6 Layers | 50M | 0.78 | -0.22 | ❌ Overfitting |
-| Full Fine-tune | 125M | 0.72 | -0.35 | ❌ Severe overfit |
+| **Frozen** | 0.2M | **0.85** | -0.03 | Healthy |
+| Last 2 Layers | 12M | 0.83 | -0.10 | Slight overfit |
+| Last 6 Layers | 50M | 0.78 | -0.22 | Overfitting |
+| Full Fine-tune | 125M | 0.72 | -0.35 | Severe overfit |
 
 **Key Insight:** With limited data, fine-tuning destroys the valuable pre-trained knowledge. The learning rate must be so low to avoid overfitting that updates become meaningless—making fine-tuning counterproductive.
 
 ---
 
-## 📊 Hyperparameter Exploration
+## Hyperparameter Exploration
 
 We systematically tested variations to optimize performance:
 
@@ -212,7 +212,7 @@ Finding: Baseline performs best (simpler is better with limited data)
 
 ---
 
-## 🎓 Key ML Concepts Explained
+## Key ML Concepts Explained
 
 ### Autoregressive vs Non-Autoregressive
 
@@ -263,7 +263,7 @@ Our Task (Transfer Learning):
 
 ---
 
-## 📈 Results & Performance
+## Results & Performance
 
 ### Expected Performance
 
@@ -295,7 +295,7 @@ GraphCodeBERT + Hierarchical Chunking:
 
 ---
 
-## 🚀 Running the Notebook
+## Running the Notebook
 
 ### Prerequisites
 
@@ -341,7 +341,7 @@ pip install torch transformers scikit-learn tqdm pandas numpy matplotlib seaborn
 
 ---
 
-## 💡 Design Decisions & Justifications
+## Design Decisions & Justifications
 
 ### 1. Why GraphCodeBERT over other models?
 
@@ -390,7 +390,7 @@ See **Frozen vs Fine-Tuning** section above. TL;DR:
 
 ---
 
-## 🔬 Future Extensions
+## Future Extensions
 
 ### 1. Multi-Branch Fusion Architecture
 
@@ -445,7 +445,7 @@ Future: Text + Control Flow Graph + Data Flow Graph
 
 ---
 
-## 📚 Key Takeaways
+## Key Takeaways
 
 ### ML Concepts Demonstrated
 
@@ -472,7 +472,7 @@ Future: Text + Control Flow Graph + Data Flow Graph
 
 ---
 
-## 📖 References
+## References
 
 ### Models & Libraries
 
@@ -494,7 +494,7 @@ Future: Text + Control Flow Graph + Data Flow Graph
 
 ---
 
-## 🎯 Conclusion
+## Conclusion
 
 This notebook demonstrates that **encoder-only transformers with hierarchical chunking** provide an effective solution for smart contract vulnerability detection. Key achievements:
 
